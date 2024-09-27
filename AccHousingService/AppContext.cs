@@ -1,23 +1,21 @@
-﻿namespace AccHousingService
+﻿using AccHousingService.Manager;
+using Helper;
+
+namespace AccHousingService
 {
-    public class AppContext
+    public class AppContext : BaseAppContext
     {
-        public AppContext(IConfiguration config)
+        public AppContext(IConfiguration config) : base(config)
         {
             Title = "AccHousingService";
-            Configuration = config;
             Initialize();
         }
 
         public void Initialize()
         {
-
-            /*Инициализация менеджеров*/
-
+            HousingManager = new HousingManager(this);
         }
-
-        public string Title { get; set; }
-        private IConfiguration Configuration { get; set; }
+        public HousingManager HousingManager { get; set; }
 
         public DBContext CreateDbContext() => new(Configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentException("Строка подключения указана неверно."));
 

@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  acc_housing_service:
+    build:
+        context: .
+        dockerfile: ./AccHousingService/Dockerfile
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=acc_housing_db;Database=acchousing;User Id=postgres;Password=postgres;
+    depends_on:
+      - acc_housing_db
+    networks:
+      - accounting_network
+    command: >
+      sh -c "dotnet ef database update && dotnet MyWebApi.dll"
+  acc_housing_db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=taskdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - acc_housing_db_data:/var/lib/postgresql/data
+    networks:
+      - accounting_network
+volumes:
+  acc_housing_db_data:
+
+networks:
+  accounting_network:
+    driver: bridge

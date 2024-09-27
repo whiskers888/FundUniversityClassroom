@@ -1,11 +1,14 @@
-﻿namespace AccHousingService.Models
-{
-    public class EFHousing
-    {
+﻿using Helper;
+using System.ComponentModel.DataAnnotations;
 
-        public int Id { get; set; }
+namespace AccHousingService.Models
+{
+    public class EFHousing : EFBaseModel
+    {
+        [Required]
         public string Name { get; set; }
+        [Required]
         public string Address { get; set; }
-        public int Floor { get; set; }
+        public int? Floor { get; set; }
     }
 }
