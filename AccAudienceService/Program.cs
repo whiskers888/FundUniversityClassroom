@@ -1,4 +1,7 @@
 
+using AccHousingService;
+using Microsoft.EntityFrameworkCore;
+
 namespace AccAudienceService
 {
     public class Program
@@ -7,25 +10,31 @@ namespace AccAudienceService
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddSingleton<AppContext>();
+            builder.Services.AddDbContext<DbContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            /*if (app.Environment.IsDevelopment())
+            {*/
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            /*}*/
+
+            using (var scope = app.Services.CreateScope())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<DBContext>();
+                context.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+                context.Database.Migrate();
             }
 
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
+            app.UseRouting();
 
             app.MapControllers();
 

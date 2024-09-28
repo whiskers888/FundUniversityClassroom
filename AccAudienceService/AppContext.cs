@@ -1,7 +1,7 @@
 ﻿using AccHousingService.Manager;
 using Helper;
 
-namespace AccHousingService
+namespace AccAudienceService
 {
     public class AppContext : BaseAppContext
     {
