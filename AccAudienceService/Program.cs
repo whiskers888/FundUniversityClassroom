@@ -1,5 +1,3 @@
-
-using AccHousingService;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccAudienceService
@@ -14,7 +12,7 @@ namespace AccAudienceService
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddSingleton<AppContext>();
+            builder.Services.AddSingleton<AudienceAppContext>();
             builder.Services.AddDbContext<DbContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 

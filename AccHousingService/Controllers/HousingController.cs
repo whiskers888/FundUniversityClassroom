@@ -1,4 +1,5 @@
-﻿using AccHousingService.DTO;
+﻿using AccHousingService.Context;
+using AccHousingService.DTO;
 using AccHousingService.Manager;
 using Helper;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ namespace AccHousingService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class HousingController(AppContext context) : BaseController(context)
+    public class HousingController(HousingAppContext context) : BaseController(context)
     {
 
         [HttpGet("[controller]/[action]")]
@@ -27,6 +28,8 @@ namespace AccHousingService.Controllers
             try
             {
                 var item = context.HousingManager.Create(dto);
+                result.housings = context.HousingManager.Housings.Select(it => new HousingDTO(it)).ToArray();
+                return Send(true, result);
             }
             catch (Exception ex)
             {
@@ -34,11 +37,6 @@ namespace AccHousingService.Controllers
                 result.error = ex.Message;
                 return Send(false, result);
             }
-
-
-            result.housings = context.HousingManager.Housings.Select(it => new HousingDTO(it)).ToArray();
-
-            return Send(true, result);
         }
 
         [HttpPut("[controller]/[action]")]
@@ -49,6 +47,8 @@ namespace AccHousingService.Controllers
             try
             {
                 item = context.HousingManager.Update(dto);
+                result.housing = new HousingDTO(item);
+                return Send(true, result);
             }
             catch (Exception ex)
             {
@@ -56,8 +56,6 @@ namespace AccHousingService.Controllers
                 result.error = ex.Message;
                 return Send(false, result);
             }
-            result.housing = new HousingDTO(item);
-            return Send(true, result);
         }
         [HttpDelete("[controller]/[action]")]
         public string Delete(int[] dtoIds)

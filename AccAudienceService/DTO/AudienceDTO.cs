@@ -1,6 +1,6 @@
-﻿using AccHousingService.Manager;
+﻿using AccAudienceService.Manager;
 
-namespace AccHousingService.DTO
+namespace AccAudienceService.DTO
 {
     public class AudienceDTO
     {

@@ -1,11 +1,11 @@
-﻿using AccHousingService.Manager;
+﻿using AccAudienceService.Manager;
 using Helper;
 
-namespace AccAudienceService
+namespace AccAudienceService.Context
 {
-    public class AppContext : BaseAppContext
+    public class AudienceAppContext : BaseAppContext
     {
-        public AppContext(IConfiguration config) : base(config)
+        public AudienceAppContext(IConfiguration config) : base(config)
         {
             Title = "AccAudienceService";
             Configuration = config;

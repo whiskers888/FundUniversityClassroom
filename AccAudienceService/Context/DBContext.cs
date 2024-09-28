@@ -1,7 +1,7 @@
 ﻿using AccAudienceService.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace AccHousingService
+namespace AccAudienceService
 {
     public class DBContext : DbContext
     {

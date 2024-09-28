@@ -1,5 +1,5 @@
-﻿using AccHousingService.DTO;
-using AccHousingService.Manager;
+﻿using AccAudienceService.Context;
+using AccAudienceService.DTO;
 using Helper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,7 +7,7 @@ namespace AccHousingService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class AudienceController(AppContext context) : BaseController(context)
+    public class AudienceController(AudienceAppContext context) : BaseController(context)
     {
 
         [HttpGet("[controller]/[action]")]
@@ -26,38 +26,34 @@ namespace AccHousingService.Controllers
             try
             {
                 var item = context.AudienceManager.Create(dto);
+                result.housings = context.AudienceManager.Audiences.Select(it => new AudienceDTO(it)).ToArray();
+                return Send(true, result);
             }
             catch (Exception ex)
             {
-                result.msg = "Ошибка добавления здания";
+                result.msg = "Ошибка добавления аудитории";
                 result.error = ex.Message;
                 return Send(false, result);
             }
-
-
-            result.housings = context.AudienceManager.Audiences.Select(it => new AudienceDTO(it)).ToArray();
-
-            return Send(true, result);
         }
 
         [HttpPut("[controller]/[action]")]
         public string Update(AudienceDTO dto)
         {
             dynamic result = GetCommon();
-            Audience item;
             try
             {
-                item = context.AudienceManager.Update(dto);
+                result.housing = new AudienceDTO(context.AudienceManager.Update(dto));
+                return Send(true, result);
             }
             catch (Exception ex)
             {
-                result.msg = "Ошибка изменения информации о здании";
+                result.msg = "Ошибка изменения информации о аудитории";
                 result.error = ex.Message;
                 return Send(false, result);
             }
-            result.housing = new AudienceDTO(item);
-            return Send(true, result);
         }
+
         [HttpDelete("[controller]/[action]")]
         public string Delete(int[] dtoIds)
         {

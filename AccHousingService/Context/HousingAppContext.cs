@@ -1,11 +1,11 @@
 ﻿using AccHousingService.Manager;
 using Helper;
 
-namespace AccHousingService
+namespace AccHousingService.Context
 {
-    public class AppContext : BaseAppContext
+    public class HousingAppContext : BaseAppContext
     {
-        public AppContext(IConfiguration config) : base(config)
+        public HousingAppContext(IConfiguration config) : base(config)
         {
             Title = "AccHousingService";
             Initialize();

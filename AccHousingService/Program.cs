@@ -1,4 +1,5 @@
 
+using AccHousingService.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccHousingService
@@ -13,7 +14,7 @@ namespace AccHousingService
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddSingleton<AppContext>();
+            builder.Services.AddSingleton<HousingAppContext>();
             builder.Services.AddDbContext<DBContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 

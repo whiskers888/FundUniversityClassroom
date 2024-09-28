@@ -1,14 +1,15 @@
 ﻿
+using AccAudienceService.Context;
+using AccAudienceService.DTO;
 using AccAudienceService.Models;
-using AccHousingService.DTO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace AccHousingService.Manager
+namespace AccAudienceService.Manager
 {
     public class AudienceManager
     {
-        public AudienceManager(AppContext applicationContext)
+        public AudienceManager(AudienceAppContext applicationContext)
         {
             AppContext = applicationContext;
 
@@ -16,7 +17,7 @@ namespace AccHousingService.Manager
             _audiences.Clear();
             Read();
         }
-        protected AppContext AppContext { get; }
+        protected AudienceAppContext AppContext { get; }
         protected DBContext DBContext { get; }
         private List<Audience> _audiences { get; set; } = new List<Audience>();
         public Audience[] Audiences { get => _audiences.ToArray(); }

@@ -1,4 +1,5 @@
-﻿using AccHousingService.DTO;
+﻿using AccHousingService.Context;
+using AccHousingService.DTO;
 using AccHousingService.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -7,7 +8,7 @@ namespace AccHousingService.Manager
 {
     public class HousingManager
     {
-        public HousingManager(AppContext applicationContext)
+        public HousingManager(HousingAppContext applicationContext)
         {
             AppContext = applicationContext;
 
@@ -15,7 +16,7 @@ namespace AccHousingService.Manager
             _housings.Clear();
             Read();
         }
-        protected AppContext AppContext { get; }
+        protected HousingAppContext AppContext { get; }
         protected DBContext DBContext { get; }
         private List<Housing> _housings { get; set; } = new List<Housing>();
         public Housing[] Housings { get => _housings.ToArray(); }
