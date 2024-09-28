@@ -6,7 +6,6 @@ namespace AccHousingService
     public class DBContext : DbContext
     {
 
-        /*Перечисление моделей*/
         public DBContext(string cnnString)
         {
             ConnectionString = cnnString;

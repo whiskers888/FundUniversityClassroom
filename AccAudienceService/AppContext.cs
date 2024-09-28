@@ -1,8 +1,11 @@
-﻿namespace AccHousingService
+﻿using AccHousingService.Manager;
+using Helper;
+
+namespace AccHousingService
 {
-    public class AppContext
+    public class AppContext : BaseAppContext
     {
-        public AppContext(IConfiguration config)
+        public AppContext(IConfiguration config) : base(config)
         {
             Title = "AccAudienceService";
             Configuration = config;
@@ -11,10 +14,10 @@
 
         public void Initialize()
         {
-
-            /*Инициализация менеджеров*/
-
+            AudienceManager = new AudienceManager(this);
         }
+
+        public AudienceManager AudienceManager { get; set; }
 
         public string Title { get; set; }
         private IConfiguration Configuration { get; set; }
