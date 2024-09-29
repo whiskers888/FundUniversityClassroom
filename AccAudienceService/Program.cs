@@ -14,8 +14,11 @@ namespace AccAudienceService
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddSingleton<AudienceAppContext>();
+
+            string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                    ?? throw new Npgsql.NpgsqlException("—трока подключени€ указана неверно.");
             builder.Services.AddDbContext<DBContext>(options =>
-                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(connectionString));
 
             var app = builder.Build();
 
@@ -25,7 +28,7 @@ namespace AccAudienceService
             app.UseSwaggerUI();
             /*}*/
 
-            Migrate(app, builder);
+            Migrate(app, builder, connectionString);
 
             app.UseRouting();
 
@@ -37,17 +40,16 @@ namespace AccAudienceService
 
         // јвто миграци€, надо как то бы вынести в helper,
         // но пока не разобралс€ как сделать так чтобы он знал о классе WebApplication
-        public static void Migrate(WebApplication app, WebApplicationBuilder builder)
+        public static void Migrate(WebApplication app, WebApplicationBuilder builder, string connectionString)
         {
-            using (var scope = app.Services.CreateScope())
+            using (IServiceScope scope = app.Services.CreateScope())
             {
-                var services = scope.ServiceProvider;
-                var context = services.GetRequiredService<DBContext>();
-                var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+                IServiceProvider services = scope.ServiceProvider;
+                DBContext context = services.GetRequiredService<DBContext>();
                 context.ConnectionString = connectionString;
 
-                var retries = 10;
-                var retryDelay = TimeSpan.FromSeconds(5);
+                int retries = 10;
+                TimeSpan retryDelay = TimeSpan.FromSeconds(5);
 
                 while (retries > 0)
                 {
