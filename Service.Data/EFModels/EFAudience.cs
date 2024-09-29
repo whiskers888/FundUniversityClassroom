@@ -1,6 +1,4 @@
-﻿using Helper.EFModels;
-
-namespace Helper.Models
+﻿namespace Service.Data.EFModels
 {
     public class EFAudience : EFBaseModel
     {

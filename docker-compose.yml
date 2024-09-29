@@ -1,24 +1,43 @@
 version: '3.8'
 
 services:
-  acc_housing_service:
+#Сервисы
+  service_housing:
     build:
         context: .
-        dockerfile: ./AccHousingService/Dockerfile
+        dockerfile: ./Service.Housing/Dockerfile
     ports:
       # - "5000:5000"
       - "5001:5001"
     environment:
       - ASPNETCORE_URLS=http://+:5001
-      - ConnectionStrings__DefaultConnection=Server=acc_housing_db;Port=5432;Database=acchousing;User Id=postgres;Password=postgres;
+      - ConnectionStrings__DefaultConnection=Server=db_housing;Port=5432;Database=acchousing;User Id=postgres;Password=postgres;
     depends_on:
-      - acc_housing_db
+      - db_housing
     networks:
-      - accounting_network
+      - general
     command: >
-      sh -c " dotnet AccHousingService.dll"
+      sh -c " dotnet Service.Housing.dll"
 
-  acc_housing_db:
+  service_audience:
+    build:
+        context: .
+        dockerfile: ./Service.Audience/Dockerfile
+    ports:
+      # - "5002:5002"
+      - "5003:5003"
+    environment:
+      - ASPNETCORE_URLS=http://+:5003
+      - ConnectionStrings__DefaultConnection=Server=db_audience;Port=5432;Database=accaudience;User Id=postgres;Password=postgres;
+    depends_on:
+      - db_audience
+    networks:
+      - general
+    command: >
+      sh -c " dotnet Service.Audience.dll"
+
+#Базы данных
+  db_housing:
     image: postgres:latest
     ports:
       - "5432:5432"
@@ -27,11 +46,11 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - acc_housing_db_data:/var/lib/postgresql/data
+      - db_data_housing:/var/lib/postgresql/data
     networks:
-      - accounting_network
+      - general
       
-  acc_audience_db:
+  db_audience:
     image: postgres:latest
     ports:
       - "5433:5432"
@@ -40,28 +59,11 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - acc_audience_db_data:/var/lib/postgresql/data
+      - db_data_audience:/var/lib/postgresql/data
     networks:
-      - accounting_network
+      - general
 
-  acc_audience_service:
-    build:
-        context: .
-        dockerfile: ./AccAudienceService/Dockerfile
-    ports:
-      # - "5002:5002"
-      - "5003:5003"
-    environment:
-      - ASPNETCORE_URLS=http://+:5003
-      - ConnectionStrings__DefaultConnection=Server=acc_audience_db;Port=5432;Database=accaudience;User Id=postgres;Password=postgres;
-    depends_on:
-      - acc_audience_db
-    networks:
-      - accounting_network
-    command: >
-      sh -c " dotnet AccAudienceService.dll"
-
-
+# Вспомогательные инструменты
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -73,15 +75,15 @@ services:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=password
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+      - data_rabbitmq:/var/lib/rabbitmq
     networks:
-      - accounting_network
+      - general
       
 volumes:
-  acc_housing_db_data:
-  acc_audience_db_data:
-  rabbitmq_data:
+  db_data_housing:
+  db_data_audience:
+  data_rabbitmq:
 
 networks:
-  accounting_network:
+  general:
     driver: bridge

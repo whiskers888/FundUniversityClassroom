@@ -1,4 +1,4 @@
-﻿namespace Helper
+﻿namespace Service.Data.DTO
 {
     public class AnswerDTO
     {

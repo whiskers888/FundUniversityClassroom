@@ -1,6 +1,6 @@
-﻿using Helper.Models;
+﻿using Service.Data.EFModels;
 
-namespace Helper.Replicats
+namespace Service.Data.Replicats
 {
     public class Housing(EFHousing context)
     {

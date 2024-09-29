@@ -1,9 +1,9 @@
 ﻿using AccHousingService.Context;
 using AccHousingService.DTO;
-using Helper.Models;
-using Helper.Replicats;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Service.Data.EFModels;
+using Service.Data.Replicats;
 
 namespace AccHousingService.Manager
 {

@@ -1,4 +1,4 @@
-﻿using Helper.Replicats;
+﻿using Service.Data.Replicats;
 
 namespace AccAudienceService.DTO
 {
