@@ -1,4 +1,4 @@
-﻿using AccAudienceService.Manager;
+﻿using Helper.Replicats;
 
 namespace AccAudienceService.DTO
 {

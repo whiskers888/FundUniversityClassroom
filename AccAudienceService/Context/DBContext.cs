@@ -1,7 +1,7 @@
-﻿using AccAudienceService.Models;
+﻿using Helper.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace AccAudienceService
+namespace AccAudienceService.Context
 {
     public class DBContext : DbContext
     {
@@ -9,6 +9,10 @@ namespace AccAudienceService
         public DBContext(string cnnString)
         {
             ConnectionString = cnnString;
+        }
+
+        public DBContext(DbContextOptions<DBContext> options) : base(options)
+        {
         }
         public DbSet<EFAudience> EFAudiences { get; set; }
         public string ConnectionString { get; set; }

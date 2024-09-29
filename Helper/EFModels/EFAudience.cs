@@ -1,6 +1,6 @@
-﻿using Helper;
+﻿using Helper.EFModels;
 
-namespace AccAudienceService.Models
+namespace Helper.Models
 {
     public class EFAudience : EFBaseModel
     {
@@ -10,5 +10,14 @@ namespace AccAudienceService.Models
         public int Capacity { get; set; }
         public int? Floor { get; set; }
         public int Number { get; set; }
+    }
+
+
+    public enum AudienceType
+    {
+        Lecture,
+        Practical,
+        Gym,
+        Other
     }
 }

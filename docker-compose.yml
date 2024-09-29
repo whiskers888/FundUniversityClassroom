@@ -6,30 +6,81 @@ services:
         context: .
         dockerfile: ./AccHousingService/Dockerfile
     ports:
-      - "5000:5000"
+      # - "5000:5000"
       - "5001:5001"
     environment:
-      - ConnectionStrings__DefaultConnection=Server=acc_housing_db;Database=acchousing;User Id=postgres;Password=postgres;
+      - ASPNETCORE_URLS=http://+:5001
+      - ConnectionStrings__DefaultConnection=Server=acc_housing_db;Port=5432;Database=acchousing;User Id=postgres;Password=postgres;
     depends_on:
       - acc_housing_db
     networks:
       - accounting_network
     command: >
-      sh -c "dotnet ef database update && dotnet MyWebApi.dll"
+      sh -c " dotnet AccHousingService.dll"
+
   acc_housing_db:
     image: postgres:latest
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=taskdb
+      - POSTGRES_DB=acchousing
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
       - acc_housing_db_data:/var/lib/postgresql/data
     networks:
       - accounting_network
+      
+  acc_audience_db:
+    image: postgres:latest
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB=accaudience
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - acc_audience_db_data:/var/lib/postgresql/data
+    networks:
+      - accounting_network
+
+  acc_audience_service:
+    build:
+        context: .
+        dockerfile: ./AccAudienceService/Dockerfile
+    ports:
+      # - "5002:5002"
+      - "5003:5003"
+    environment:
+      - ASPNETCORE_URLS=http://+:5003
+      - ConnectionStrings__DefaultConnection=Server=acc_audience_db;Port=5432;Database=accaudience;User Id=postgres;Password=postgres;
+    depends_on:
+      - acc_audience_db
+    networks:
+      - accounting_network
+    command: >
+      sh -c " dotnet AccAudienceService.dll"
+
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=password
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - accounting_network
+      
 volumes:
   acc_housing_db_data:
+  acc_audience_db_data:
+  rabbitmq_data:
 
 networks:
   accounting_network:

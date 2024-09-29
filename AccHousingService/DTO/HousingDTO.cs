@@ -1,4 +1,4 @@
-﻿using AccHousingService.Manager;
+﻿using Helper.Replicats;
 
 namespace AccHousingService.DTO
 {

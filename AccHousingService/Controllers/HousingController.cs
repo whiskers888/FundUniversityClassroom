@@ -1,6 +1,5 @@
 ﻿using AccHousingService.Context;
 using AccHousingService.DTO;
-using AccHousingService.Manager;
 using Helper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,9 +14,8 @@ namespace AccHousingService.Controllers
         public string GetAll()
         {
             dynamic result = GetCommon();
-            Housing[] housings = context.HousingManager.Housings;
 
-            result.housings = housings.Select(it => new HousingDTO(it)).ToArray();
+            result.housings = context.HousingManager.Housings.Select(it => new HousingDTO(it)).ToArray();
             return Send(true, result);
         }
 
@@ -43,11 +41,9 @@ namespace AccHousingService.Controllers
         public string Update(HousingDTO dto)
         {
             dynamic result = GetCommon();
-            Housing item;
             try
             {
-                item = context.HousingManager.Update(dto);
-                result.housing = new HousingDTO(item);
+                result.housing = new HousingDTO(context.HousingManager.Update(dto));
                 return Send(true, result);
             }
             catch (Exception ex)

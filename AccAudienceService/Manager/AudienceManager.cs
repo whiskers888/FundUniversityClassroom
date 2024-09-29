@@ -1,7 +1,8 @@
 ﻿
 using AccAudienceService.Context;
 using AccAudienceService.DTO;
-using AccAudienceService.Models;
+using Helper.Models;
+using Helper.Replicats;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -15,11 +16,13 @@ namespace AccAudienceService.Manager
 
             DBContext = applicationContext.CreateDbContext();
             _audiences.Clear();
+            _housing.Clear();
             Read();
         }
         protected AudienceAppContext AppContext { get; }
         protected DBContext DBContext { get; }
         private List<Audience> _audiences { get; set; } = new List<Audience>();
+        private List<Housing> _housing { get; set; } = new List<Housing>();
         public Audience[] Audiences { get => _audiences.ToArray(); }
 
         private void Read()
@@ -62,7 +65,7 @@ namespace AccAudienceService.Manager
             Audience item = _audiences.FirstOrDefault(it => it.Id == id);
             try
             {
-                DBContext.Remove(item.Context);
+                item.Context.IsDeleted = true;
                 DBContext.SaveChanges();
             }
             catch (Exception ex)
@@ -72,17 +75,6 @@ namespace AccAudienceService.Manager
             _audiences.Remove(item);
             return true;
         }
-    }
-    public class Audience(EFAudience context)
-    {
-        internal EFAudience Context { get; set; } = context;
-        public int Id { get => Context.Id; }
-        public string Name { get => Context.Name; set => Context.Name = value; }
-        public int HousingId { get => Context.HousingId; set => Context.HousingId = value; }
-        public AudienceType AudienceType { get => Context.AudienceType; set => Context.AudienceType = value; }
-        public int Capacity { get => Context.Capacity; set => Context.Capacity = value; }
-        public int? Floor { get => Context.Floor; set => Context.Floor = value; }
-        public int Number { get => Context.Number; set => Context.Number = value; }
     }
 
 }

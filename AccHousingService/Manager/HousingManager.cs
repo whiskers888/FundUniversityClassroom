@@ -1,6 +1,7 @@
 ﻿using AccHousingService.Context;
 using AccHousingService.DTO;
-using AccHousingService.Models;
+using Helper.Models;
+using Helper.Replicats;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -61,7 +62,7 @@ namespace AccHousingService.Manager
             Housing item = _housings.FirstOrDefault(it => it.Id == id);
             try
             {
-                DBContext.Remove(item.Context);
+                item.Context.IsDeleted = true;
                 DBContext.SaveChanges();
             }
             catch (Exception ex)
@@ -71,14 +72,6 @@ namespace AccHousingService.Manager
             _housings.Remove(item);
             return true;
         }
-    }
-    public class Housing(EFHousing context)
-    {
-        internal EFHousing Context { get; set; } = context;
-        public int Id { get => Context.Id; }
-        public string Name { get => Context.Name; set => Context.Name = value; }
-        public string Address { get => Context.Address; set => Context.Address = value; }
-        public int? Floor { get => Context.Floor; set => Context.Floor = value; }
     }
 
 }

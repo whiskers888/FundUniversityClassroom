@@ -1,7 +1,7 @@
-﻿using Helper;
+﻿using Helper.EFModels;
 using System.ComponentModel.DataAnnotations;
 
-namespace AccHousingService.Models
+namespace Helper.Models
 {
     public class EFHousing : EFBaseModel
     {

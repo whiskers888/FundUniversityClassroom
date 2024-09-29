@@ -1,7 +1,7 @@
-﻿using AccHousingService.Models;
+﻿using Helper.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace AccHousingService
+namespace AccHousingService.Context
 {
     public class DBContext : DbContext
     {
