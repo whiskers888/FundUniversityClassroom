@@ -1,11 +1,13 @@
-﻿using AccHousingService.Context;
-using AccHousingService.DTO;
+﻿using Service.Common.ModelExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Service.Data.EFModels;
-using Service.Data.Replicats;
+using Serivice.Context;
+using Service.Housing.Context;
+using Service.Housing.Models.DTO;
+using Service.Housing.Models.EF;
+using Service.Housing.Models.Replicates;
 
-namespace AccHousingService.Manager
+namespace Service.Housing.Manager
 {
     public class HousingManager
     {
@@ -19,23 +21,22 @@ namespace AccHousingService.Manager
         }
         protected HousingAppContext AppContext { get; }
         protected DBContext DBContext { get; }
-        private List<Housing> _housings { get; set; } = new List<Housing>();
-        public Housing[] Housings { get => _housings.ToArray(); }
-
+        private List<HousingRepl> _housings { get; set; } = new List<HousingRepl>();
+        public HousingRepl[] Housings { get => _housings.ToArray(); }
         private void Read()
         {
             foreach (EFHousing item in DBContext.EFHousing)
             {
-                if (item.IsDeleted != true) _housings.Add(new Housing(item));
+                if (item.IsDeleted != true) _housings.Add(new HousingRepl(item));
             }
         }
 
-        public Housing Get(int id) => _housings[id];
+        public HousingRepl Get(int id) => _housings[id];
 
-        public Housing Create(HousingDTO model)
+        public HousingRepl Create(HousingDTO model)
         {
             EFHousing entity = new EFHousing();
-            Housing housing = new Housing(entity);
+            HousingRepl housing = new HousingRepl(entity);
             model.Map(ref housing);
 
             DBContext.Add(entity);
@@ -43,33 +44,39 @@ namespace AccHousingService.Manager
 
             _housings.Add(housing);
 
+            AppContext.HousingPublisher.PublishHousingMessage("housing.add", new HousingMessage() { Id = housing.Id, Name = housing.Name });
+
             return housing;
         }
 
-        public Housing Update(HousingDTO model)
+        public HousingRepl Update(HousingDTO model)
         {
-            Housing housing = _housings.FirstOrDefault(it => it.Id == model.id);
+            HousingRepl housing = _housings.FirstOrDefault(it => it.Id == model.id);
             model.Map(ref housing);
             EntityEntry<EFHousing> entity = DBContext.Entry(housing.Context);
             if (entity.State != EntityState.Added)
                 entity.State = EntityState.Modified;
             DBContext.SaveChanges();
+
+            AppContext.HousingPublisher.PublishHousingMessage("housing.update", new HousingMessage() { Id = housing.Id, Name = housing.Name });
             return housing;
         }
 
         public bool Delete(int id)
         {
-            Housing item = _housings.FirstOrDefault(it => it.Id == id);
+            HousingRepl housing = _housings.FirstOrDefault(it => it.Id == id);
             try
             {
-                item.Context.IsDeleted = true;
+                housing.Context.IsDeleted = true;
                 DBContext.SaveChanges();
+
+                AppContext.HousingPublisher.PublishHousingMessage("housing.delete", new HousingMessage() { Id = housing.Id });
             }
             catch (Exception ex)
             {
                 return false;
             }
-            _housings.Remove(item);
+            _housings.Remove(housing);
             return true;
         }
     }

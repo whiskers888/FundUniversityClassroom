@@ -1,11 +1,11 @@
-﻿using Service.Data.Replicats;
+﻿using Service.Audience.Models.Replicates;
 
-namespace AccAudienceService.DTO
+namespace Service.Audience.Models.DTO
 {
     public class AudienceDTO
     {
         public AudienceDTO() { }
-        public AudienceDTO(Audience context)
+        public AudienceDTO(AudienceRepl context)
         {
             id = context.Id;
             name = context.Name;
@@ -21,7 +21,7 @@ namespace AccAudienceService.DTO
         public int capacity { get; set; }
         public int number { get; set; }
         public int? floor { get; set; }
-        public void Map(ref Audience context)
+        public void Map(ref AudienceRepl context)
         {
             context.Name = name;
             context.HousingId = housingId;

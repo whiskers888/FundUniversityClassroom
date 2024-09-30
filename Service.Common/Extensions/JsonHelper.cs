@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Helper
+namespace Service.Common.Extensions
 {
     public static class JsonHelper
     {
@@ -9,10 +9,13 @@ namespace Helper
             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             WriteIndented = true
         };
-
         public static string Serialize<T>(T obj)
         {
             return JsonSerializer.Serialize(obj, Options);
+        }
+        public static T Deserialize<T>(string obj)
+        {
+            return JsonSerializer.Deserialize<T>(obj, Options) ?? throw new JsonException($"Произошла ошибка с десериализацией:\n {obj}");
         }
     }
 }

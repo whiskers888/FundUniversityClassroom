@@ -1,13 +1,16 @@
-﻿using AccHousingService.Manager;
-using Helper;
+﻿using RabbitMQ.Client;
+using Service.Common;
+using Service.Housing.Context;
+using Service.Housing.Manager;
 
-namespace AccHousingService.Context
+namespace Serivice.Context
 {
-    public class HousingAppContext : BaseAppContext
+    public class HousingAppContext : IAppContext
     {
-        public HousingAppContext(IConfiguration config) : base(config)
+        public HousingAppContext(IConfiguration config, IModel rabbitMqChannel)
         {
-            Title = "AccHousingService";
+            Title = "Service.Housing";
+            HousingPublisher = new HousingPublisher(rabbitMqChannel);
             Initialize();
         }
 
@@ -15,7 +18,11 @@ namespace AccHousingService.Context
         {
             HousingManager = new HousingManager(this);
         }
+
+        public HousingPublisher HousingPublisher { get; set; }
         public HousingManager HousingManager { get; set; }
+        public string Title { get; set; }
+        public IConfiguration Configuration { get; set; }
 
         public DBContext CreateDbContext() => new(Configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentException("Строка подключения указана неверно."));
 

@@ -1,15 +1,14 @@
-﻿using AccAudienceService.Context;
-using AccAudienceService.DTO;
-using Helper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Service.Audience.Context;
+using Service.Audience.Models.DTO;
+using Service.Common;
 
-namespace AccHousingService.Controllers
+namespace Service.Audience.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class AudienceController(AudienceAppContext context) : BaseController(context)
     {
-
         [HttpGet("[controller]/[action]")]
         public string GetAll()
         {

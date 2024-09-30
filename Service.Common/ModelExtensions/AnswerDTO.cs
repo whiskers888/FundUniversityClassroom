@@ -1,4 +1,4 @@
-﻿namespace Service.Data.DTO
+﻿namespace Service.Common.ModelExtensions
 {
     public class AnswerDTO
     {

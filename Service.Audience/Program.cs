@@ -1,7 +1,10 @@
-using AccAudienceService.Context;
-using Microsoft.EntityFrameworkCore;
 
-namespace AccAudienceService
+using Microsoft.EntityFrameworkCore;
+using Service.Audience.Context;
+using Service.Audience.Manager;
+using Service.Common.Extensions;
+
+namespace Service.Audience
 {
     public class Program
     {
@@ -12,15 +15,22 @@ namespace AccAudienceService
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddRabbitMQ(builder.Configuration);
 
-            builder.Services.AddSingleton<AudienceAppContext>();
+            builder.Configuration.AddEnvironmentVariables();
 
             string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                     ?? throw new Npgsql.NpgsqlException("Строка подключения указана неверно.");
+
             builder.Services.AddDbContext<DBContext>(options =>
                 options.UseNpgsql(connectionString));
 
+            builder.Services.AddSingleton<AudienceAppContext>();
+
+            builder.Services.AddHostedService<HousingConsumer>();
+
             var app = builder.Build();
+
 
             /*if (app.Environment.IsDevelopment())
             {*/
@@ -28,48 +38,15 @@ namespace AccAudienceService
             app.UseSwaggerUI();
             /*}*/
 
-            Migrate(app, builder, connectionString);
+            MigrationHelper.Migrate<DBContext>(app.Services, connectionString);
+
 
             app.UseRouting();
 
             app.MapControllers();
 
             app.Run();
-        }
 
-
-        // Авто миграция, надо как то бы вынести в helper,
-        // но пока не разобрался как сделать так чтобы он знал о классе WebApplication
-        public static void Migrate(WebApplication app, WebApplicationBuilder builder, string connectionString)
-        {
-            using (IServiceScope scope = app.Services.CreateScope())
-            {
-                IServiceProvider services = scope.ServiceProvider;
-                DBContext context = services.GetRequiredService<DBContext>();
-                context.ConnectionString = connectionString;
-
-                int retries = 10;
-                TimeSpan retryDelay = TimeSpan.FromSeconds(5);
-
-                while (retries > 0)
-                {
-                    try
-                    {
-                        context.Database.Migrate();
-                        break;
-                    }
-                    catch (Npgsql.NpgsqlException ex)
-                    {
-                        retries--;
-                        if (retries == 0)
-                        {
-                            throw;
-                        }
-                        Console.WriteLine($"Не удалость установить подключение к БД. Попытка через {retryDelay.TotalSeconds} секунд... ({retries} попытка)");
-                        Thread.Sleep(retryDelay);
-                    }
-                }
-            }
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿
+﻿using Service.Common.ModelExtensions;
 using System.ComponentModel.DataAnnotations;
 
 
-namespace Service.Data.EFModels
+namespace Service.Housing.Models.EF
 {
     public class EFHousing : EFBaseModel
     {

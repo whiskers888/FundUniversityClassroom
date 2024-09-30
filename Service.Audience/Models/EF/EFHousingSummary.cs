@@ -2,15 +2,14 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 
-namespace Service.Data.EFModels
+namespace Service.Audience.Models.EFModels
 {
-    public class EFBaseModel
+    public class EFHousingSummary
     {
-
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
-        public bool IsDeleted { get; set; } = false;
+        public string Name { get; set; }
     }
 }

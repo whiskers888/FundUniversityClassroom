@@ -1,9 +1,9 @@
-﻿using AccHousingService.Context;
-using AccHousingService.DTO;
-using Helper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Serivice.Context;
+using Service.Common;
+using Service.Housing.Models.DTO;
 
-namespace AccHousingService.Controllers
+namespace Service.Housing.Controllers
 {
     [ApiController]
     [Route("[controller]")]

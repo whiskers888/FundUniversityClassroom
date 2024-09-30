@@ -1,19 +1,23 @@
-version: '3.8'
+version: "3.8"
 
 services:
-#Сервисы
+  #Сервисы
   service_housing:
     build:
-        context: .
-        dockerfile: ./Service.Housing/Dockerfile
+      context: .
+      dockerfile: ./Service.Housing/Dockerfile
     ports:
       # - "5000:5000"
       - "5001:5001"
     environment:
       - ASPNETCORE_URLS=http://+:5001
       - ConnectionStrings__DefaultConnection=Server=db_housing;Port=5432;Database=acchousing;User Id=postgres;Password=postgres;
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__UserName=admin
+      - RabbitMQ__Password=password
     depends_on:
       - db_housing
+      - rabbitmq
     networks:
       - general
     command: >
@@ -21,22 +25,26 @@ services:
 
   service_audience:
     build:
-        context: .
-        dockerfile: ./Service.Audience/Dockerfile
+      context: .
+      dockerfile: ./Service.Audience/Dockerfile
     ports:
       # - "5002:5002"
       - "5003:5003"
     environment:
       - ASPNETCORE_URLS=http://+:5003
-      - ConnectionStrings__DefaultConnection=Server=db_audience;Port=5432;Database=accaudience;User Id=postgres;Password=postgres;
+      - ConnectionStrings__DefaultConnection=Server=db_audience;Port=5433;Database=accaudience;User Id=postgres;Password=postgres;
+      - RabbitMQ__HostName=rabbitmq
+      - RabbitMQ__UserName=admin
+      - RabbitMQ__Password=password
     depends_on:
       - db_audience
+      - rabbitmq
     networks:
       - general
     command: >
       sh -c " dotnet Service.Audience.dll"
 
-#Базы данных
+  #Базы данных
   db_housing:
     image: postgres:latest
     ports:
@@ -49,11 +57,12 @@ services:
       - db_data_housing:/var/lib/postgresql/data
     networks:
       - general
-      
+    command: ["postgres", "-p", "5432"]
+
   db_audience:
     image: postgres:latest
     ports:
-      - "5433:5432"
+      - "5433:5433"
     environment:
       - POSTGRES_DB=accaudience
       - POSTGRES_USER=postgres
@@ -62,8 +71,9 @@ services:
       - db_data_audience:/var/lib/postgresql/data
     networks:
       - general
+    command: ["postgres", "-p", "5433"]
 
-# Вспомогательные инструменты
+  # Вспомогательные инструменты
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -78,7 +88,7 @@ services:
       - data_rabbitmq:/var/lib/rabbitmq
     networks:
       - general
-      
+
 volumes:
   db_data_housing:
   db_data_audience:

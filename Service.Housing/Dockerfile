@@ -2,15 +2,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-COPY Service.Data/Service.Data.csproj Service.Data/
-RUN dotnet restore Service.Data/Service.Data.csproj
+COPY Service.Common/Service.Common.csproj Service.Common/
+RUN dotnet restore Service.Common/Service.Common.csproj
 
-COPY Service.Data/ Service.Data/
-
-COPY Helper/Helper.csproj Helper/
-RUN dotnet restore Helper/Helper.csproj
-
-COPY Helper/ Helper/
+COPY Service.Common/ Service.Common/
 
 COPY Service.Housing/Service.Housing.csproj Service.Housing/
 RUN dotnet restore Service.Housing/Service.Housing.csproj

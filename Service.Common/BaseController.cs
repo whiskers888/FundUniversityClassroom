@@ -1,13 +1,14 @@
-﻿using Service.Data.DTO;
+﻿using Service.Common.Extensions;
+using Service.Common.ModelExtensions;
 using System.Dynamic;
 using System.Web.Mvc;
 
-namespace Helper
+namespace Service.Common
 {
     public class BaseController : ControllerBase
     {
-        public BaseAppContext Context { get; }
-        public BaseController(BaseAppContext context)
+        public IAppContext Context { get; }
+        public BaseController(IAppContext context)
         {
             Context = context;
         }

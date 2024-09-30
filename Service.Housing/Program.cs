@@ -1,8 +1,9 @@
-
-using AccHousingService.Context;
+using Service.Common.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Serivice.Context;
+using Service.Housing.Context;
 
-namespace AccHousingService
+namespace Serivice.Housing
 {
     public class Program
     {
@@ -13,7 +14,7 @@ namespace AccHousingService
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+            builder.Services.AddRabbitMQ(builder.Configuration);
             builder.Services.AddSingleton<HousingAppContext>();
 
             string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
@@ -29,47 +30,13 @@ namespace AccHousingService
             app.UseSwaggerUI();
             //}
 
-            Migrate(app, builder, connectionString);
+            MigrationHelper.Migrate<DBContext>(app.Services, connectionString);
 
             app.UseRouting();
 
             app.MapControllers();
 
             app.Run();
-        }
-
-        // Авто миграция, надо как то бы вынести в helper,
-        // но пока не разобрался как сделать так чтобы он знал о классе WebApplication
-        public static void Migrate(WebApplication app, WebApplicationBuilder builder, string connectionString)
-        {
-            using (var scope = app.Services.CreateScope())
-            {
-                IServiceProvider services = scope.ServiceProvider;
-                DBContext context = services.GetRequiredService<DBContext>();
-                context.ConnectionString = connectionString;
-
-                int retries = 10;
-                TimeSpan retryDelay = TimeSpan.FromSeconds(5);
-
-                while (retries > 0)
-                {
-                    try
-                    {
-                        context.Database.Migrate();
-                        break;
-                    }
-                    catch (Npgsql.NpgsqlException ex)
-                    {
-                        retries--;
-                        if (retries == 0)
-                        {
-                            throw;
-                        }
-                        Console.WriteLine($"Не удалость установить подключение к БД. Попытка через {retryDelay.TotalSeconds} секунд... ({retries} попытка)");
-                        Thread.Sleep(retryDelay);
-                    }
-                }
-            }
         }
     }
 }

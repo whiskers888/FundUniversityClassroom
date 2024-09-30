@@ -1,14 +1,16 @@
-﻿using AccAudienceService.Manager;
-using Helper;
+﻿using RabbitMQ.Client;
+using Service.Audience.Manager;
+using Service.Common;
 
-namespace AccAudienceService.Context
+namespace Service.Audience.Context
 {
-    public class AudienceAppContext : BaseAppContext
+    public class AudienceAppContext : IAppContext
     {
-        public AudienceAppContext(IConfiguration config) : base(config)
+        public AudienceAppContext(IConfiguration config, IModel rabbitMqChannel)
         {
             Title = "AccAudienceService";
             Configuration = config;
+            RabbitMQChannel = rabbitMqChannel;
             Initialize();
         }
 
@@ -17,10 +19,12 @@ namespace AccAudienceService.Context
             AudienceManager = new AudienceManager(this);
         }
 
+        public IModel RabbitMQChannel { get; set; }
+
         public AudienceManager AudienceManager { get; set; }
 
         public string Title { get; set; }
-        private IConfiguration Configuration { get; set; }
+        public IConfiguration Configuration { get; set; }
 
         public DBContext CreateDbContext() => new(Configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentException("Строка подключения указана неверно."));
 

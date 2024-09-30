@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Service.Data.EFModels;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Service.Audience.Models.EFModels;
+using Service.Common;
 
-namespace AccAudienceService.Context
+namespace Service.Audience.Context
 {
-    public class DBContext : DbContext
+    public class DBContext : DbContext, IDbContext
     {
 
         public DBContext(string cnnString)
@@ -15,7 +17,10 @@ namespace AccAudienceService.Context
         {
         }
         public DbSet<EFAudience> EFAudiences { get; set; }
+        public DbSet<EFHousingSummary> EFHousing { get; set; }
         public string ConnectionString { get; set; }
+
+        public DatabaseFacade DatabaseContext => Database;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
