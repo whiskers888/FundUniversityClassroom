@@ -12,8 +12,8 @@ using Service.Audience.Context;
 namespace Service.Audience.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20240930172000_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241001082438_InitialCreater")]
+    partial class InitialCreater
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,7 +42,7 @@ namespace Service.Audience.Migrations
                     b.Property<int?>("Floor")
                         .HasColumnType("integer");
 
-                    b.Property<int>("HousingId")
+                    b.Property<int?>("HousingId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsDeleted")
@@ -57,7 +57,35 @@ namespace Service.Audience.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("HousingId");
+
                     b.ToTable("EFAudiences");
+                });
+
+            modelBuilder.Entity("Service.Audience.Models.EFModels.EFHousingSummary", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EFHousingSummary");
+                });
+
+            modelBuilder.Entity("Service.Audience.Models.EFModels.EFAudience", b =>
+                {
+                    b.HasOne("Service.Audience.Models.EFModels.EFHousingSummary", "Housing")
+                        .WithMany()
+                        .HasForeignKey("HousingId");
+
+                    b.Navigation("Housing");
                 });
 #pragma warning restore 612, 618
         }

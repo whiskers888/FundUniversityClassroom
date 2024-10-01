@@ -17,7 +17,7 @@ namespace Service.Audience.Context
         {
         }
         public DbSet<EFAudience> EFAudiences { get; set; }
-        public DbSet<EFHousingSummary> EFHousing { get; set; }
+        public DbSet<EFHousingSummary> EFHousingSummary { get; set; }
         public string ConnectionString { get; set; }
 
         public DatabaseFacade DatabaseContext => Database;

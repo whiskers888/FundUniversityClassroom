@@ -13,8 +13,8 @@ namespace Service.Audience.Models.EFModels
 
 
         [ForeignKey("Housing")]
-        public int HousingId { get; set; }
-        public EFHousingSummary Housing { get; set; }
+        public int? HousingId { get; set; }
+        public EFHousingSummary? Housing { get; set; }
     }
 
 

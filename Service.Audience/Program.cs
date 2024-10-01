@@ -1,5 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Service.Audience.Context;
 using Service.Audience.Manager;
 using Service.Common.Extensions;
@@ -14,7 +15,10 @@ namespace Service.Audience
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API", Version = "v1" });
+            });
             builder.Services.AddRabbitMQ(builder.Configuration);
 
             builder.Configuration.AddEnvironmentVariables();
@@ -35,7 +39,10 @@ namespace Service.Audience
             /*if (app.Environment.IsDevelopment())
             {*/
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API V1");
+            });
             /*}*/
 
             MigrationHelper.Migrate<DBContext>(app.Services, connectionString);

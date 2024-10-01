@@ -79,7 +79,7 @@ namespace Service.Audience.Manager
 
         public void Create(HousingMessage message)
         {
-            if (_dbContext.EFHousing.FirstOrDefault(it => it.Id == message.Id) == null)
+            if (_dbContext.EFHousingSummary.FirstOrDefault(it => it.Id == message.Id) == null)
             {
                 EFHousingSummary entity = new EFHousingSummary()
                 {
@@ -96,7 +96,7 @@ namespace Service.Audience.Manager
         }
         public void Update(HousingMessage message)
         {
-            EFHousingSummary entity = _dbContext.EFHousing.FirstOrDefault(it => it.Id == message.Id);
+            EFHousingSummary entity = _dbContext.EFHousingSummary.FirstOrDefault(it => it.Id == message.Id);
             if (entity != null)
             {
                 entity.Name = message.Name;
@@ -117,7 +117,7 @@ namespace Service.Audience.Manager
         }
         public void Delete(HousingMessage message)
         {
-            EFHousingSummary entity = _dbContext.EFHousing.FirstOrDefault(it => it.Id == message.Id);
+            EFHousingSummary entity = _dbContext.EFHousingSummary.FirstOrDefault(it => it.Id == message.Id);
             if (entity != null)
             {
                 _dbContext.Remove(entity);

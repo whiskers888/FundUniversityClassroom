@@ -39,7 +39,7 @@ namespace Service.Audience.Migrations
                     b.Property<int?>("Floor")
                         .HasColumnType("integer");
 
-                    b.Property<int>("HousingId")
+                    b.Property<int?>("HousingId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsDeleted")
@@ -73,16 +73,14 @@ namespace Service.Audience.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EFHousing");
+                    b.ToTable("EFHousingSummary");
                 });
 
             modelBuilder.Entity("Service.Audience.Models.EFModels.EFAudience", b =>
                 {
                     b.HasOne("Service.Audience.Models.EFModels.EFHousingSummary", "Housing")
                         .WithMany()
-                        .HasForeignKey("HousingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("HousingId");
 
                     b.Navigation("Housing");
                 });

@@ -10,6 +10,7 @@ namespace Serivice.Context
         public HousingAppContext(IConfiguration config, IModel rabbitMqChannel)
         {
             Title = "Service.Housing";
+            Configuration = config;
             HousingPublisher = new HousingPublisher(rabbitMqChannel);
             Initialize();
         }

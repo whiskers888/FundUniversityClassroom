@@ -21,7 +21,7 @@ namespace Service.Common.Extensions
             services.AddSingleton(sp =>
             {
                 var factory = sp.GetRequiredService<IConnectionFactory>();
-                return factory.CreateConnection();
+                return CreateConnectionWithRetry(factory);
             });
 
             services.AddSingleton(sp =>
@@ -31,6 +31,31 @@ namespace Service.Common.Extensions
             });
 
             return services;
+        }
+
+        private static IConnection CreateConnectionWithRetry(IConnectionFactory factory)
+        {
+            const int maxRetries = 10;
+            const int delayBetweenRetries = 5000; // 5 seconds
+
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
+            {
+                try
+                {
+                    return factory.CreateConnection();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to connect to RabbitMQ (attempt {attempt}/{maxRetries}): {ex.Message}");
+                    if (attempt == maxRetries)
+                    {
+                        throw; // Re-throw the exception if all attempts fail
+                    }
+                    Thread.Sleep(delayBetweenRetries);
+                }
+            }
+
+            throw new InvalidOperationException("This code should never be reached.");
         }
     }
 }

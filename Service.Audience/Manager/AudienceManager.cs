@@ -15,18 +15,18 @@ namespace Service.Audience.Manager
         {
             AppContext = applicationContext;
 
-            DBContext = applicationContext.CreateDbContext();
+            _dbContext = applicationContext.CreateDbContext();
 
             _audiences.Clear();
             Read();
         }
         protected AudienceAppContext AppContext { get; }
-        protected DBContext DBContext { get; }
+        protected DBContext _dbContext { get; }
         private List<AudienceRepl> _audiences { get; set; } = new List<AudienceRepl>();
         public AudienceRepl[] Audiences { get => _audiences.ToArray(); }
         private void Read()
         {
-            foreach (EFAudience item in DBContext.EFAudiences)
+            foreach (EFAudience item in _dbContext.EFAudiences)
             {
                 if (item.IsDeleted != true) _audiences.Add(new AudienceRepl(item));
             }
@@ -39,9 +39,13 @@ namespace Service.Audience.Manager
             EFAudience entity = new EFAudience();
             AudienceRepl audience = new AudienceRepl(entity);
             model.Map(ref audience);
+            EFHousingSummary entityHousing = _dbContext.EFHousingSummary.FirstOrDefault(h => h.Id == model.housing.id);
 
-            DBContext.Add(entity);
-            DBContext.SaveChanges();
+            if (entityHousing != null)
+                audience.Housing = new HousingRepl(entityHousing);
+
+            _dbContext.Add(entity);
+            _dbContext.SaveChanges();
 
             _audiences.Add(audience);
 
@@ -52,10 +56,10 @@ namespace Service.Audience.Manager
         {
             AudienceRepl audience = _audiences.FirstOrDefault(it => it.Id == model.id);
             model.Map(ref audience);
-            EntityEntry<EFAudience> entity = DBContext.Entry(audience.Context);
+            EntityEntry<EFAudience> entity = _dbContext.Entry(audience.Context);
             if (entity.State != EntityState.Added)
                 entity.State = EntityState.Modified;
-            DBContext.SaveChanges();
+            _dbContext.SaveChanges();
             return audience;
         }
 
@@ -65,7 +69,7 @@ namespace Service.Audience.Manager
             try
             {
                 item.Context.IsDeleted = true;
-                DBContext.SaveChanges();
+                _dbContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -73,6 +77,24 @@ namespace Service.Audience.Manager
             }
             _audiences.Remove(item);
             return true;
+        }
+
+
+        public AudienceRepl Bind(int housingId, int audienceId)
+        {
+            AudienceRepl item = _audiences.FirstOrDefault(it => it.Id == audienceId);
+            EFHousingSummary entityHousing = _dbContext.EFHousingSummary.FirstOrDefault(it => it.Id == housingId);
+            item.Housing = new HousingRepl(entityHousing);
+            _dbContext.SaveChanges();
+            return item;
+        }
+
+        public AudienceRepl Unbind(int audienceId)
+        {
+            AudienceRepl item = _audiences.FirstOrDefault(it => it.Id == audienceId);
+            item.Housing = null;
+            _dbContext.SaveChanges();
+            return item;
         }
     }
 

@@ -13,6 +13,7 @@ namespace Service.Common.Extensions
                 TContext context = scope.ServiceProvider.GetRequiredService<TContext>();
                 context.ConnectionString = connectionString;
 
+                bool tryCretated = false;
                 int retries = 10;
                 TimeSpan retryDelay = TimeSpan.FromSeconds(5);
 

@@ -14,10 +14,16 @@ namespace Service.Audience.Controllers
         {
             dynamic result = GetCommon();
 
-            result.housings = context.AudienceManager.Audiences.Select(it => new AudienceDTO(it)).ToArray();
+            result.audiences = context.AudienceManager.Audiences.Select(it => new AudienceDTO(it)).ToArray();
             return Send(true, result);
         }
-
+        /// <summary>
+        /// Добавляет аудиторию
+        /// </summary>
+        /// <remarks>
+        /// Обратите внимание, что этот метод принимает HousingDTO, но он не обязателен, есть возможность позже привязаться через метод Bind
+        /// </remarks>
+        /// <returns>Список аудиторий.</returns>
         [HttpPost("[controller]/[action]")]
         public string Add(AudienceDTO dto)
         {
@@ -25,7 +31,7 @@ namespace Service.Audience.Controllers
             try
             {
                 var item = context.AudienceManager.Create(dto);
-                result.housings = context.AudienceManager.Audiences.Select(it => new AudienceDTO(it)).ToArray();
+                result.audiences = context.AudienceManager.Audiences.Select(it => new AudienceDTO(it)).ToArray();
                 return Send(true, result);
             }
             catch (Exception ex)
@@ -42,7 +48,7 @@ namespace Service.Audience.Controllers
             dynamic result = GetCommon();
             try
             {
-                result.housing = new AudienceDTO(context.AudienceManager.Update(dto));
+                result.audiences = new AudienceDTO(context.AudienceManager.Update(dto));
                 return Send(true, result);
             }
             catch (Exception ex)
@@ -64,9 +70,31 @@ namespace Service.Audience.Controllers
                 if (!res) NoDeleted.Add(id);
             }
             result.noDeleted = NoDeleted.ToArray();
-            result.housings = context.AudienceManager.Audiences.Select(it => new AudienceDTO(it));
+            result.audiences = context.AudienceManager.Audiences.Select(it => new AudienceDTO(it));
 
             return Send(true, result);
+
+        }
+
+
+        [HttpPost("[controller]/[action]")]
+        public string Bind(int housingId, int audienceId)
+        {
+            dynamic result = GetCommon();
+            var item = context.AudienceManager.Bind(housingId, audienceId);
+
+            result.audience = new AudienceDTO(item);
+
+            return Send(true, result);
+
+        }
+        [HttpPost("[controller]/[action]")]
+        public string Unbind(int audienceId)
+        {
+            dynamic result = GetCommon();
+            var item = context.AudienceManager.Unbind(audienceId);
+
+            return GetAll();
 
         }
     }
