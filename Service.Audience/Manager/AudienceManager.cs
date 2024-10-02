@@ -29,7 +29,7 @@ namespace Service.Audience.Manager
         {
             foreach (EFAudience item in _dbContext.EFAudiences)
             {
-                if (item.IsDeleted != true) _audiences.Add(new AudienceRepl(item, AppContext));
+                if (item.IsDeleted != true) _audiences.Add(new AudienceRepl(item));
             }
         }
 
@@ -38,7 +38,7 @@ namespace Service.Audience.Manager
         public AudienceRepl Create(AudienceDTO model)
         {
             EFAudience entity = new EFAudience();
-            AudienceRepl audience = new AudienceRepl(entity, AppContext);
+            AudienceRepl audience = new AudienceRepl(entity);
             model.Map(ref audience);
             EFHousingSummary entityHousing = _dbContext.EFHousingSummary.FirstOrDefault(h => h.Id == model.housing.id);
 
@@ -121,9 +121,14 @@ namespace Service.Audience.Manager
 
         private bool DeleteFieldValue(int fieldId, int audId)
         {
-            _dbContext.Remove(_dbContext.EFAudCustomFieldsValues.FirstOrDefault(it => it.CustomFieldId == fieldId && it.AudienceId == audId));
-            _dbContext.SaveChanges();
-            return true;
+            var entity = _dbContext.EFAudCustomFieldsValues.FirstOrDefault(it => it.CustomFieldId == fieldId && it.AudienceId == audId);
+            if (entity != null)
+            {
+                _dbContext.Remove(entity);
+                _dbContext.SaveChanges();
+                return true;
+            }
+            return false;
         }
 
         public AudienceRepl Bind(int housingId, int audienceId)

@@ -1,10 +1,9 @@
-﻿using Service.Audience.Context;
-using Service.Audience.Models.EFModels;
+﻿using Service.Audience.Models.EFModels;
 
 namespace Service.Audience.Models.Replicates
 {
 
-    public class AudienceRepl(EFAudience context, AudienceAppContext appContext)
+    public class AudienceRepl(EFAudience context)
     {
         public EFAudience Context = context;
         public int Id { get => Context.Id; }
