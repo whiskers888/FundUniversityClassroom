@@ -8,7 +8,7 @@ namespace Service.Audience.Context
     {
         public AudienceAppContext(IConfiguration config, IModel rabbitMqChannel)
         {
-            Title = "AccAudienceService";
+            Title = "Service.Audience";
             Configuration = config;
             RabbitMQChannel = rabbitMqChannel;
             Initialize();
@@ -17,11 +17,14 @@ namespace Service.Audience.Context
         public void Initialize()
         {
             AudienceManager = new AudienceManager(this);
+            AudFieldManager = new AudFieldManager(this);
         }
 
         public IModel RabbitMQChannel { get; set; }
 
         public AudienceManager AudienceManager { get; set; }
+
+        public AudFieldManager AudFieldManager { get; set; }
 
         public string Title { get; set; }
         public IConfiguration Configuration { get; set; }

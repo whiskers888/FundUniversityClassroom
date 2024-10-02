@@ -10,6 +10,15 @@ namespace Service.Audience.Controllers
     public class AudienceController(AudienceAppContext context) : BaseController(context)
     {
         [HttpGet("[controller]/[action]")]
+        public string Initialize()
+        {
+            dynamic result = GetCommon();
+
+            result.avaliableFields = context.AudFieldManager.Fields.Select(it => new AudFieldDTO(it)).ToArray();
+            return Send(true, result);
+        }
+
+        [HttpGet("[controller]/[action]")]
         public string GetAll()
         {
             dynamic result = GetCommon();
@@ -21,7 +30,8 @@ namespace Service.Audience.Controllers
         /// Добавляет аудиторию
         /// </summary>
         /// <remarks>
-        /// Обратите внимание, что этот метод принимает HousingDTO, но он не обязателен, есть возможность позже привязаться через метод Bind
+        /// Обратите внимание, что этот метод принимает HousingDTO, но он не обязателен, 
+        /// есть возможность позже привязаться через метод Bind.
         /// </remarks>
         /// <returns>Список аудиторий.</returns>
         [HttpPost("[controller]/[action]")]
@@ -77,6 +87,13 @@ namespace Service.Audience.Controllers
         }
 
 
+        /// <summary>
+        /// Добавляет аудиторию
+        /// </summary>
+        /// <remarks>
+        /// В случае если нужно список аудиторий привязать за зданием.
+        /// </remarks>
+        /// <returns>Список аудиторий.</returns>
         [HttpPost("[controller]/[action]")]
         public string Bind(int housingId, int audienceId)
         {

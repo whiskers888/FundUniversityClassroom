@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Service.Audience.Context;
 using Service.Audience.Models.DTO;
+using Service.Audience.Models.EF;
 using Service.Audience.Models.EFModels;
 using Service.Audience.Models.Replicates;
 
@@ -28,16 +29,16 @@ namespace Service.Audience.Manager
         {
             foreach (EFAudience item in _dbContext.EFAudiences)
             {
-                if (item.IsDeleted != true) _audiences.Add(new AudienceRepl(item));
+                if (item.IsDeleted != true) _audiences.Add(new AudienceRepl(item, AppContext));
             }
         }
 
-        public AudienceRepl Get(int id) => _audiences[id];
+        public AudienceRepl Get(int id) => _audiences.FirstOrDefault(it => it.Id == id);
 
         public AudienceRepl Create(AudienceDTO model)
         {
             EFAudience entity = new EFAudience();
-            AudienceRepl audience = new AudienceRepl(entity);
+            AudienceRepl audience = new AudienceRepl(entity, AppContext);
             model.Map(ref audience);
             EFHousingSummary entityHousing = _dbContext.EFHousingSummary.FirstOrDefault(h => h.Id == model.housing.id);
 
@@ -46,12 +47,30 @@ namespace Service.Audience.Manager
 
             _dbContext.Add(entity);
             _dbContext.SaveChanges();
+            CreateFieldValue(model.fieldValue, entity.Id);
 
             _audiences.Add(audience);
 
             return audience;
         }
+        private void CreateFieldValue(Dictionary<int, string> keyValue, int audId)
+        {
+            foreach (var item in keyValue)
+            {
+                if (!_dbContext.EFAudCustomFieldsValues.Any(f => f.AudienceId == audId && f.CustomFieldId == item.Key))
+                {
+                    EFAudValue entity = new EFAudValue()
+                    {
+                        AudienceId = audId,
+                        CustomFieldId = item.Key,
+                        Value = item.Value
+                    };
+                    _dbContext.Add(entity);
+                }
+            }
 
+            _dbContext.SaveChanges();
+        }
         public AudienceRepl Update(AudienceDTO model)
         {
             AudienceRepl audience = _audiences.FirstOrDefault(it => it.Id == model.id);
@@ -59,8 +78,25 @@ namespace Service.Audience.Manager
             EntityEntry<EFAudience> entity = _dbContext.Entry(audience.Context);
             if (entity.State != EntityState.Added)
                 entity.State = EntityState.Modified;
+            UpdateFieldValue(model.fieldValue, audience.Id);
             _dbContext.SaveChanges();
             return audience;
+        }
+        private void UpdateFieldValue(Dictionary<int, string> keyValue, int audId)
+        {
+            foreach (var item in keyValue)
+            {
+                EFAudValue entity = _dbContext.EFAudCustomFieldsValues.FirstOrDefault(it => it.CustomFieldId == item.Key && it.AudienceId == audId);
+                if (entity != null)
+                {
+                    if (item.Value == "")
+                        ;
+                    entity.Value = item.Value;
+                    EntityEntry<EFAudValue> entityEntity = _dbContext.Entry(entity);
+                    if (entityEntity.State != EntityState.Added)
+                        entityEntity.State = EntityState.Modified;
+                }
+            }
         }
 
         public bool Delete(int id)
@@ -69,6 +105,10 @@ namespace Service.Audience.Manager
             try
             {
                 item.Context.IsDeleted = true;
+                foreach (var fieldvalue in item.FieldValue)
+                {
+                    DeleteFieldValue(fieldvalue.Key, item.Id);
+                }
                 _dbContext.SaveChanges();
             }
             catch (Exception ex)
@@ -79,6 +119,12 @@ namespace Service.Audience.Manager
             return true;
         }
 
+        private bool DeleteFieldValue(int fieldId, int audId)
+        {
+            _dbContext.Remove(_dbContext.EFAudCustomFieldsValues.FirstOrDefault(it => it.CustomFieldId == fieldId && it.AudienceId == audId));
+            _dbContext.SaveChanges();
+            return true;
+        }
 
         public AudienceRepl Bind(int housingId, int audienceId)
         {

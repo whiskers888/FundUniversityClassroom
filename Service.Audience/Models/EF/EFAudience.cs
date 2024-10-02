@@ -1,4 +1,5 @@
-﻿using Service.Common.ModelExtensions;
+﻿using Service.Audience.Models.EF;
+using Service.Common.ModelExtensions;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Service.Audience.Models.EFModels
@@ -14,7 +15,10 @@ namespace Service.Audience.Models.EFModels
 
         [ForeignKey("Housing")]
         public int? HousingId { get; set; }
-        public EFHousingSummary? Housing { get; set; }
+        public virtual EFHousingSummary? Housing { get; set; }
+
+
+        public virtual List<EFAudValue> CustomFieldValues { get; set; } = new List<EFAudValue>();
     }
 
 
