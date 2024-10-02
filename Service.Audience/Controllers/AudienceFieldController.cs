@@ -9,7 +9,10 @@ namespace Service.Audience.Controllers
     [Route("[controller]")]
     public class AudienceFieldController(AudienceAppContext context) : BaseController(context)
     {
-
+        /// <summary>
+        /// Возвращает список всех дополнительных полей.
+        /// </summary>
+        /// <returns>Список дополнительных полей.</returns>
         [HttpGet("[controller]/[action]")]
         public string GetAll()
         {
@@ -18,7 +21,11 @@ namespace Service.Audience.Controllers
             result.existFields = context.AudFieldManager.Fields.Select(it => new AudFieldDTO(it)).ToArray();
             return Send(true, result);
         }
-
+        /// <summary>
+        /// Добавляет новое дополнительное поле.
+        /// </summary>
+        /// <param name="dto">DTO с информацией о новом дополнительном поле.</param>
+        /// <returns>Список дополнительных полей после добавления нового.</returns>
         [HttpPost("[controller]/[action]")]
         public string Add(AudFieldDTO dto)
         {
@@ -36,7 +43,11 @@ namespace Service.Audience.Controllers
                 return Send(false, result);
             }
         }
-
+        /// <summary>
+        /// Обновляет информацию о существующем дополнительном поле.
+        /// </summary>
+        /// <param name="dto">DTO с обновленной информацией о дополнительном поле.</param>
+        /// <returns>Обновленная информация о дополнительном поле.</returns>
         [HttpPut("[controller]/[action]")]
         public string Update(AudFieldDTO dto)
         {
@@ -53,7 +64,11 @@ namespace Service.Audience.Controllers
                 return Send(false, result);
             }
         }
-
+        /// <summary>
+        /// Удаляет дополнительные поля по их идентификаторам.
+        /// </summary>
+        /// <param name="dtoIds">Массив идентификаторов дополнительных полей для удаления.</param>
+        /// <returns>Список дополнительных полей после удаления.</returns>
         [HttpDelete("[controller]/[action]")]
         public string Delete(int[] dtoIds)
         {

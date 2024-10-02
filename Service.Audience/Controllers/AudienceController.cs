@@ -9,6 +9,10 @@ namespace Service.Audience.Controllers
     [Route("[controller]")]
     public class AudienceController(AudienceAppContext context) : BaseController(context)
     {
+        /// <summary>
+        /// Инициализирует приложение и возвращает доступные поля.
+        /// </summary>
+        /// <returns>Объект с доступными полями.</returns>
         [HttpGet("[controller]/[action]")]
         public string Initialize()
         {
@@ -17,7 +21,10 @@ namespace Service.Audience.Controllers
             result.avaliableFields = context.AudFieldManager.Fields.Select(it => new AudFieldDTO(it)).ToArray();
             return Send(true, result);
         }
-
+        /// <summary>
+        /// Возвращает список всех аудиторий.
+        /// </summary>
+        /// <returns>Список аудиторий.</returns>
         [HttpGet("[controller]/[action]")]
         public string GetAll()
         {
@@ -27,13 +34,14 @@ namespace Service.Audience.Controllers
             return Send(true, result);
         }
         /// <summary>
-        /// Добавляет аудиторию
+        /// Добавляет новую аудиторию.
         /// </summary>
         /// <remarks>
         /// Обратите внимание, что этот метод принимает HousingDTO, но он не обязателен, 
         /// есть возможность позже привязаться через метод Bind.
         /// </remarks>
-        /// <returns>Список аудиторий.</returns>
+        /// <param name="dto">DTO с информацией о новой аудитории.</param>
+        /// <returns>Список всех аудиторий с учетом добавления новой.</returns>
         [HttpPost("[controller]/[action]")]
         public string Add(AudienceDTO dto)
         {
@@ -51,7 +59,11 @@ namespace Service.Audience.Controllers
                 return Send(false, result);
             }
         }
-
+        /// <summary>
+        /// Обновляет информацию о существующей аудитории.
+        /// </summary>
+        /// <param name="dto">DTO с обновленной информацией о аудитории.</param>
+        /// <returns>Обновленная информация о аудитории.</returns>
         [HttpPut("[controller]/[action]")]
         public string Update(AudienceDTO dto)
         {
@@ -68,7 +80,11 @@ namespace Service.Audience.Controllers
                 return Send(false, result);
             }
         }
-
+        /// <summary>
+        /// Удаляет аудитории по их идентификаторам.
+        /// </summary>
+        /// <param name="dtoIds">Массив идентификаторов аудиторий для удаления.</param>
+        /// <returns>Список аудиторий после удаления.</returns>
         [HttpDelete("[controller]/[action]")]
         public string Delete(int[] dtoIds)
         {
@@ -88,12 +104,11 @@ namespace Service.Audience.Controllers
 
 
         /// <summary>
-        /// Добавляет аудиторию
+        /// Привязывает аудиторию к зданию.
         /// </summary>
-        /// <remarks>
-        /// В случае если нужно список аудиторий привязать за зданием.
-        /// </remarks>
-        /// <returns>Список аудиторий.</returns>
+        /// <param name="housingId">Идентификатор здания.</param>
+        /// <param name="audienceId">Идентификатор аудитории.</param>
+        /// <returns>Информация о привязанной аудитории.</returns>
         [HttpPost("[controller]/[action]")]
         public string Bind(int housingId, int audienceId)
         {
@@ -105,6 +120,11 @@ namespace Service.Audience.Controllers
             return Send(true, result);
 
         }
+        /// <summary>
+        /// Отвязывает аудиторию от здания.
+        /// </summary>
+        /// <param name="audienceId">Идентификатор аудитории.</param>
+        /// <returns>Список всех аудиторий.</returns>
         [HttpPost("[controller]/[action]")]
         public string Unbind(int audienceId)
         {

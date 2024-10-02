@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using Service.Audience.Context;
 using Service.Audience.Manager;
 using Service.Common.Extensions;
+using System.Reflection;
 
 namespace Service.Audience
 {
@@ -18,6 +19,9 @@ namespace Service.Audience
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Service.Audience.API", Version = "v1" });
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
             builder.Services.AddRabbitMQ(builder.Configuration);
 
