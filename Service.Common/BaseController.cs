@@ -1,7 +1,7 @@
-﻿using Service.Common.Extensions;
+﻿using Microsoft.AspNetCore.Mvc;
+using Service.Common.Extensions;
 using Service.Common.ModelExtensions;
 using System.Dynamic;
-using System.Web.Mvc;
 
 namespace Service.Common
 {
@@ -27,11 +27,6 @@ namespace Service.Common
                 result = res,
                 data = result,
             });
-        }
-
-        protected override void ExecuteCore()
-        {
-            throw new NotImplementedException();
         }
     }
 }
