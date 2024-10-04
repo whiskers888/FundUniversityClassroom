@@ -29,7 +29,6 @@ namespace Service.Audience.Models.DTO
             context.Capacity = capacity;
             context.Number = number;
             context.Floor = floor;
-            //context.FieldValue = fieldValue;
         }
     }
 

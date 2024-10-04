@@ -1,5 +1,6 @@
 ﻿using RabbitMQ.Client;
 using Service.Audience.Manager;
+using Service.Audience.Messaging.Publishers;
 using Service.Common;
 
 namespace Service.Audience.Context
@@ -18,13 +19,16 @@ namespace Service.Audience.Context
         {
             AudienceManager = new AudienceManager(this);
             AudFieldManager = new AudFieldManager(this);
+            SoftwareManager = new SoftwareManager(this);
+            NotificationPublisher = new NotificationPublisher(RabbitMQChannel);
         }
 
         public IModel RabbitMQChannel { get; set; }
 
         public AudienceManager AudienceManager { get; set; }
-
+        public SoftwareManager SoftwareManager { get; set; }
         public AudFieldManager AudFieldManager { get; set; }
+        public NotificationPublisher NotificationPublisher { get; set; }
 
         public string Title { get; set; }
         public IConfiguration Configuration { get; set; }

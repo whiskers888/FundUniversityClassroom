@@ -2,7 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Service.Audience.Context;
-using Service.Audience.Manager;
+using Service.Audience.Messaging.Consumers;
+using Service.Audience.Messaging.Publishers;
 using Service.Common.Extensions;
 using System.Reflection;
 
@@ -21,7 +22,7 @@ namespace Service.Audience
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Service.Audience.API", Version = "v1" });
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
+                //c.IncludeXmlComments(xmlPath);
             });
             builder.Services.AddRabbitMQ(builder.Configuration);
 
@@ -36,6 +37,8 @@ namespace Service.Audience
             builder.Services.AddSingleton<AudienceAppContext>();
 
             builder.Services.AddHostedService<HousingConsumer>();
+
+            builder.Services.AddHostedService<ExpiringLicense>();
 
             var app = builder.Build();
 

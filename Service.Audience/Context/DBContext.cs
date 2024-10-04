@@ -22,6 +22,9 @@ namespace Service.Audience.Context
 
         public DbSet<EFAudField> EFAudCustomFields { get; set; }
         public DbSet<EFAudValue> EFAudCustomFieldsValues { get; set; }
+
+
+        public DbSet<EFSoftware> EFSoftware { get; set; }
         public string ConnectionString { get; set; }
 
         public DatabaseFacade DatabaseContext => Database;

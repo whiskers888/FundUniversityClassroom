@@ -8,7 +8,7 @@ using Service.Common.Extensions;
 using Service.Common.ModelExtensions;
 using System.Text;
 
-namespace Service.Audience.Manager
+namespace Service.Audience.Messaging.Consumers
 {
     public class HousingConsumer : BackgroundService
     {
@@ -41,7 +41,7 @@ namespace Service.Audience.Manager
             stoppingToken.ThrowIfCancellationRequested();
 
             var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += async (model, ea) =>
+            consumer.Received += (model, ea) =>
             {
                 var body = ea.Body.ToArray();
                 HousingMessage message = JsonHelper.Deserialize<HousingMessage>(Encoding.UTF8.GetString(body));
