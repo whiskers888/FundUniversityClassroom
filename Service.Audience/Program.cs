@@ -1,11 +1,9 @@
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using Service.Audience.Context;
 using Service.Audience.Messaging.Consumers;
 using Service.Audience.Messaging.Publishers;
 using Service.Common.Extensions;
-using System.Reflection;
 
 namespace Service.Audience
 {
@@ -19,10 +17,10 @@ namespace Service.Audience
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Service.Audience.API", Version = "v1" });
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                //c.IncludeXmlComments(xmlPath);
+                //c.SwaggerDoc("v1", new OpenApiInfo { Title = "Service.Audience.API", Version = "v1" });
+                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                ////c.IncludeXmlComments(xmlPath);
             });
             builder.Services.AddRabbitMQ(builder.Configuration);
 
@@ -46,10 +44,7 @@ namespace Service.Audience
             /*if (app.Environment.IsDevelopment())
             {*/
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API V1");
-            });
+            app.UseSwaggerUI();
             /*}*/
 
             MigrationHelper.Migrate<DBContext>(app.Services, connectionString);
