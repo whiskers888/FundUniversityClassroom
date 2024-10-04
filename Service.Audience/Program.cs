@@ -15,13 +15,7 @@ namespace Service.Audience
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(c =>
-            {
-                //c.SwaggerDoc("v1", new OpenApiInfo { Title = "Service.Audience.API", Version = "v1" });
-                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                ////c.IncludeXmlComments(xmlPath);
-            });
+            builder.Services.AddSwaggerGen();
             builder.Services.AddRabbitMQ(builder.Configuration);
 
             builder.Configuration.AddEnvironmentVariables();
@@ -38,6 +32,8 @@ namespace Service.Audience
 
             builder.Services.AddHostedService<ExpiringLicense>();
 
+            //builder.Services.AddHealthChecks();
+
             var app = builder.Build();
 
 
@@ -47,6 +43,7 @@ namespace Service.Audience
             app.UseSwaggerUI();
             /*}*/
 
+            //app.UseHealthChecks("/health");
             MigrationHelper.Migrate<DBContext>(app.Services, connectionString);
 
 

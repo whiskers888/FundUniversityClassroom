@@ -5,8 +5,6 @@ using Service.Housing.Models.DTO;
 
 namespace Service.Housing.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
     public class HousingController(HousingAppContext context) : BaseController(context)
     {
 

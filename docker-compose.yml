@@ -1,14 +1,13 @@
 version: "3.8"
 
 services:
-  #Сервисы
+  # Сервисы
   service_housing:
     build:
       context: .
       dockerfile: ./Service.Housing/Dockerfile
-    ports:
-      # - "5000:5000"
-      - "5001:5001"
+    # ports:
+    #   - "5001:5001"
     environment:
       - ASPNETCORE_URLS=http://+:5001
       - ConnectionStrings__DefaultConnection=Server=db_housing;Port=5432;Database=acchousing;User Id=postgres;Password=postgres;
@@ -27,9 +26,8 @@ services:
     build:
       context: .
       dockerfile: ./Service.Audience/Dockerfile
-    ports:
-      # - "5002:5002"
-      - "5003:5003"
+    # ports:
+    #   - "5003:5003"
     environment:
       - ASPNETCORE_URLS=http://+:5003
       - ConnectionStrings__DefaultConnection=Server=db_audience;Port=5433;Database=accaudience;User Id=postgres;Password=postgres;
@@ -48,9 +46,8 @@ services:
     build:
       context: .
       dockerfile: ./Service.Notification/Dockerfile
-    ports:
-      # - "5004:5004"
-      - "5005:5005"
+    # ports:
+    #   - "5005:5005"
     environment:
       - ASPNETCORE_URLS=http://+:5005
       - RabbitMQ__HostName=rabbitmq
@@ -63,7 +60,7 @@ services:
     command: >
       sh -c " dotnet Service.Notification.dll"
 
-  #Базы данных
+  # Базы данных
   db_housing:
     image: postgres:latest
     ports:
@@ -118,6 +115,7 @@ services:
       - 443:443
     networks:
       - general
+    restart: always
 
 volumes:
   db_data_housing:

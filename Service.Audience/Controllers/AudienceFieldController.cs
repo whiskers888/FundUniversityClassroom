@@ -5,8 +5,6 @@ using Service.Common;
 
 namespace Service.Audience.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
     public class AudienceFieldController(AudienceAppContext context) : BaseController(context)
     {
         /// <summary>
