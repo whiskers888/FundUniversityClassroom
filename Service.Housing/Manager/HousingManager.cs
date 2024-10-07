@@ -1,7 +1,7 @@
-﻿using Service.Common.ModelExtensions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Serivice.Context;
+using Service.Common.ModelExtensions;
 using Service.Housing.Context;
 using Service.Housing.Models.DTO;
 using Service.Housing.Models.EF;
@@ -51,7 +51,8 @@ namespace Service.Housing.Manager
 
         public HousingRepl Update(HousingDTO model)
         {
-            HousingRepl housing = _housings.FirstOrDefault(it => it.Id == model.id);
+            HousingRepl? housing = _housings.FirstOrDefault(it => it.Id == model.id);
+            if (housing == null) throw new ArgumentException("Такой модели не существует!"); ;
             model.Map(ref housing);
             EntityEntry<EFHousing> entity = DBContext.Entry(housing.Context);
             if (entity.State != EntityState.Added)
@@ -64,7 +65,8 @@ namespace Service.Housing.Manager
 
         public bool Delete(int id)
         {
-            HousingRepl housing = _housings.FirstOrDefault(it => it.Id == id);
+            HousingRepl? housing = _housings.FirstOrDefault(it => it.Id == id);
+            if (housing == null) throw new ArgumentException("Такой модели не существует!"); ;
             try
             {
                 housing.Context.IsDeleted = true;
@@ -74,6 +76,8 @@ namespace Service.Housing.Manager
             }
             catch (Exception ex)
             {
+
+                AppContext.Logger.LogError(ex.InnerException?.Message);
                 return false;
             }
             _housings.Remove(housing);

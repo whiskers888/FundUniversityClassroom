@@ -2,6 +2,7 @@
 
 namespace Service.Notification.Hubs
 {
+    //[SignalRHub]
     public class NotificationHub : Hub
     {
         public override async Task<Task> OnConnectedAsync()

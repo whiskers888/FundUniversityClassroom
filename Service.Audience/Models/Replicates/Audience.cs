@@ -8,7 +8,7 @@ namespace Service.Audience.Models.Replicates
         public EFAudience Context = context;
         public int Id { get => Context.Id; }
         public string Name { get => Context.Name; set => Context.Name = value; }
-        public HousingRepl Housing
+        public HousingRepl? Housing
         {
             get => Context.Housing != null ? new HousingRepl(context.Housing) : null;
             set => Context.HousingId = value?.Id;

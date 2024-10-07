@@ -16,6 +16,7 @@ namespace Service.Notification
             builder.Services.AddSignalR();
 
             builder.Services.AddEndpointsApiExplorer();
+
             builder.Services.AddSwaggerGen();
 
 

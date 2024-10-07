@@ -40,7 +40,7 @@ namespace Service.Audience.Manager
             EFAudience entity = new EFAudience();
             AudienceRepl audience = new AudienceRepl(entity);
             model.Map(ref audience);
-            EFHousingSummary entityHousing = _dbContext.EFHousingSummary.FirstOrDefault(h => h.Id == model.housing.id);
+            EFHousingSummary? entityHousing = _dbContext.EFHousingSummary.FirstOrDefault(h => h.Id == model.housing.id);
 
             if (entityHousing != null)
                 audience.Housing = new HousingRepl(entityHousing);
@@ -73,7 +73,8 @@ namespace Service.Audience.Manager
         }
         public AudienceRepl Update(AudienceDTO model)
         {
-            AudienceRepl audience = _audiences.FirstOrDefault(it => it.Id == model.id);
+            AudienceRepl? audience = _audiences.FirstOrDefault(it => it.Id == model.id);
+            if (audience == null) throw new ArgumentException("Такой модели не существует!"); ;
             model.Map(ref audience);
             EntityEntry<EFAudience> entity = _dbContext.Entry(audience.Context);
             if (entity.State != EntityState.Added)
@@ -86,12 +87,11 @@ namespace Service.Audience.Manager
         {
             foreach (var item in keyValue)
             {
-                EFAudValue entity = _dbContext.EFAudCustomFieldsValues.FirstOrDefault(it => it.CustomFieldId == item.Key && it.AudienceId == audId);
+                EFAudValue? entity = _dbContext.EFAudCustomFieldsValues.FirstOrDefault(it => it.CustomFieldId == item.Key && it.AudienceId == audId);
                 if (entity != null)
                 {
                     if (item.Value == "")
-                        ;
-                    entity.Value = item.Value;
+                        entity.Value = item.Value;
                     EntityEntry<EFAudValue> entityEntity = _dbContext.Entry(entity);
                     if (entityEntity.State != EntityState.Added)
                         entityEntity.State = EntityState.Modified;
@@ -101,7 +101,8 @@ namespace Service.Audience.Manager
 
         public bool Delete(int id)
         {
-            AudienceRepl item = _audiences.FirstOrDefault(it => it.Id == id);
+            AudienceRepl? item = _audiences.FirstOrDefault(it => it.Id == id);
+            if (item == null) throw new ArgumentException("Такой модели не существует!");
             try
             {
                 item.Context.IsDeleted = true;
@@ -113,6 +114,8 @@ namespace Service.Audience.Manager
             }
             catch (Exception ex)
             {
+
+                AppContext.Logger.LogError(ex.InnerException?.Message);
                 return false;
             }
             _audiences.Remove(item);
@@ -133,8 +136,9 @@ namespace Service.Audience.Manager
 
         public AudienceRepl Bind(int housingId, int audienceId)
         {
-            AudienceRepl item = _audiences.FirstOrDefault(it => it.Id == audienceId);
-            EFHousingSummary entityHousing = _dbContext.EFHousingSummary.FirstOrDefault(it => it.Id == housingId);
+            AudienceRepl? item = _audiences.FirstOrDefault(it => it.Id == audienceId);
+            EFHousingSummary? entityHousing = _dbContext.EFHousingSummary.FirstOrDefault(it => it.Id == housingId);
+            if (item == null || entityHousing == null) throw new ArgumentException("Такой модели не существует!"); ;
             item.Housing = new HousingRepl(entityHousing);
             _dbContext.SaveChanges();
             return item;
@@ -142,7 +146,8 @@ namespace Service.Audience.Manager
 
         public AudienceRepl Unbind(int audienceId)
         {
-            AudienceRepl item = _audiences.FirstOrDefault(it => it.Id == audienceId);
+            AudienceRepl? item = _audiences.FirstOrDefault(it => it.Id == audienceId);
+            if (item == null) throw new ArgumentException("Такой модели не существует!"); ;
             item.Housing = null;
             _dbContext.SaveChanges();
             return item;

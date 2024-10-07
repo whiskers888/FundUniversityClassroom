@@ -7,9 +7,11 @@ namespace Serivice.Context
 {
     public class HousingAppContext : IAppContext
     {
-        public HousingAppContext(IConfiguration config, IModel rabbitMqChannel)
+        public HousingAppContext(IConfiguration config, IModel rabbitMqChannel,
+            ILogger<HousingAppContext> logger)
         {
             Title = "Service.Housing";
+            Logger = logger;
             Configuration = config;
             HousingPublisher = new HousingPublisher(rabbitMqChannel);
             Initialize();
@@ -22,6 +24,7 @@ namespace Serivice.Context
 
         public HousingPublisher HousingPublisher { get; set; }
         public HousingManager HousingManager { get; set; }
+        public ILogger<HousingAppContext> Logger { get; set; }
         public string Title { get; set; }
         public IConfiguration Configuration { get; set; }
 

@@ -7,16 +7,19 @@ namespace Service.Audience.Context
 {
     public class AudienceAppContext : IAppContext
     {
-        public AudienceAppContext(IConfiguration config, IModel rabbitMqChannel)
+        public AudienceAppContext(IConfiguration config, IModel rabbitMqChannel, ILogger<AudienceAppContext> logger)
         {
             Title = "Service.Audience";
+            Logger = logger;
             Configuration = config;
             RabbitMQChannel = rabbitMqChannel;
             Initialize();
+
         }
 
         public void Initialize()
         {
+
             AudienceManager = new AudienceManager(this);
             AudFieldManager = new AudFieldManager(this);
             SoftwareManager = new SoftwareManager(this);
@@ -29,6 +32,7 @@ namespace Service.Audience.Context
         public SoftwareManager SoftwareManager { get; set; }
         public AudFieldManager AudFieldManager { get; set; }
         public NotificationPublisher NotificationPublisher { get; set; }
+        public ILogger<AudienceAppContext> Logger { get; set; }
 
         public string Title { get; set; }
         public IConfiguration Configuration { get; set; }

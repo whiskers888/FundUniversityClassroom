@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Npgsql;
 
 namespace Service.Common.Extensions
 {
@@ -23,12 +22,12 @@ namespace Service.Common.Extensions
                         context.Database.Migrate();
                         break;
                     }
-                    catch (NpgsqlException ex)
+                    catch
                     {
                         retries--;
                         if (retries == 0)
                         {
-                            throw;
+                            return;
                         }
                         Console.WriteLine($"Не удалость установить подключение к БД. Попытка через {retryDelay.TotalSeconds} секунд... ({retries} попытка)");
                         Thread.Sleep(retryDelay);

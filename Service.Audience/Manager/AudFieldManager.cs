@@ -49,7 +49,8 @@ namespace Service.Audience.Manager
 
         public AudField Update(AudFieldDTO model)
         {
-            AudField field = _fields.FirstOrDefault(it => it.Id == model.id);
+            AudField? field = _fields.FirstOrDefault(it => it.Id == model.id);
+            if (field == null) throw new ArgumentException("Такой модели не существует!");
 
             model.Map(ref field);
 
@@ -63,7 +64,8 @@ namespace Service.Audience.Manager
 
         public bool Delete(int id)
         {
-            AudField item = _fields.FirstOrDefault(it => it.Id == id);
+            AudField? item = _fields.FirstOrDefault(it => it.Id == id);
+            if (item == null) throw new ArgumentException("Такого объекта не существует!"); ;
             try
             {
                 item.Context.IsDeleted = true;
@@ -71,6 +73,7 @@ namespace Service.Audience.Manager
             }
             catch (Exception ex)
             {
+                AppContext.Logger.LogError(ex.InnerException?.Message);
                 return false;
             }
             _fields.Remove(item);

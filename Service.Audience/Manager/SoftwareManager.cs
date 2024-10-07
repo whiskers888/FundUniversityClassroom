@@ -48,18 +48,21 @@ namespace Service.Audience.Manager
 
         public Software Update(SoftwareInputDTO model)
         {
-            Software software = _software.FirstOrDefault(it => it.Id == model.id);
-            model.Map(ref software);
-            EntityEntry<EFSoftware> entity = _dbContext.Entry(software.Context);
+            Software? item = _software.FirstOrDefault(it => it.Id == model.id);
+            if (item == null) throw new ArgumentException("Такой модели не существует!");
+            model.Map(ref item);
+            EntityEntry<EFSoftware> entity = _dbContext.Entry(item.Context);
             if (entity.State != EntityState.Added)
                 entity.State = EntityState.Modified;
             _dbContext.SaveChanges();
-            return software;
+            return item;
         }
 
         public bool Delete(int id)
         {
-            Software item = _software.FirstOrDefault(it => it.Id == id);
+            Software? item = _software.FirstOrDefault(it => it.Id == id);
+
+            if (item == null) throw new ArgumentException("Такой модели не существует!");
 
             item.Context.IsDeleted = true;
             _dbContext.SaveChanges();
